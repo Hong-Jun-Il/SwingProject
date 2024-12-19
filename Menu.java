@@ -1,17 +1,16 @@
-package menus.coffee;
 import javax.swing.*;
 
-public class IceAmericano {
-    private String name = "아이스 아메리카노";          // 메뉴 이름
-    private int price = 2000;         // 가격
-    private String description = "한성커피만의 특별한 로스팅을 거친 아이스 아메리카노입니다.";   // 설명
-    private String imagePath = "images/IceAmericano.jpg";     // 이미지 경로
-    private String category = "커피";      // 카테고리
-    private int id = 1;               // 메뉴 ID (고유 식별자)
-    private int stock = 20;            // 재고 수량
+public class Menu {
+    private String name;          // 메뉴 이름
+    private int price;            // 가격
+    private String description;   // 설명
+    private String imagePath;     // 이미지 경로
+    private String category;      // 카테고리
+    private int id;               // 메뉴 ID (고유 식별자)
+    private int stock;            // 재고 수량
 
     // 생성자
-    public IceAmericano(int id, String name, int price, String description, String imagePath, String category, int stock) {
+    public Menu(int id, String name, int price, String description, String imagePath, String category, int stock) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -21,42 +20,42 @@ public class IceAmericano {
         this.stock = stock;
     }
 
-    //가격 반환
-    public double getPrice() {
+    // 가격 반환
+    public int getPrice() {
         return price;
     }
 
-    //이름 반환
+    // 이름 반환
     public String getName() {
         return name;
     }
 
-    //설명 반환
+    // 설명 반환
     public String getDescription() {
         return description;
     }
 
-    //이미지 파일 반환
+    // 이미지 파일 반환
     public String getImagePath() {
         return imagePath;
     }
 
-    //카테고리 반환
+    // 카테고리 반환
     public String getCategory() {
         return category;
     }
 
-    //식별 아이디 반환
+    // 식별 아이디 반환
     public int getId() {
         return id;
     }
 
-    //재고 반환
+    // 재고 반환
     public int getStock() {
         return stock;
     }
 
-    //판매 시 재고 빼기
+    // 판매 시 재고 빼기
     public void decreaseStock(int quantity) {
         if (this.stock - quantity < 0) {
             // 재고 부족 시 메시지 팝업을 띄움
