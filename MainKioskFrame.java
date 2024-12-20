@@ -1,6 +1,9 @@
+import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 public class MainKioskFrame extends JFrame {
@@ -23,7 +26,7 @@ public class MainKioskFrame extends JFrame {
 
         // 전체 UI 구성
         initializeUI();
-
+        playSound("sound/selectMenu.wav");
         setLocationRelativeTo(null);
         setVisible(true);
     }
@@ -132,7 +135,7 @@ public class MainKioskFrame extends JFrame {
         card.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200)));
 
         // 이미지 패널
-        JPanel imagePanel = new JPanel(new BorderLayout());
+        JPanel imagePanel = new JPanel(new GridBagLayout());
         imagePanel.setBackground(Color.WHITE);
         JLabel imageLabel = new JLabel();
 
@@ -145,7 +148,13 @@ public class MainKioskFrame extends JFrame {
             imageLabel.setText("No Image");
         }
 
-        imagePanel.add(imageLabel, BorderLayout.CENTER);
+        // GridBagConstraints 설정
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.CENTER; // 중앙 정렬
+        imagePanel.add(imageLabel, gbc);
+
         card.add(imagePanel, BorderLayout.CENTER);
 
         // 정보 패널
@@ -155,7 +164,7 @@ public class MainKioskFrame extends JFrame {
         JLabel nameLabel = new JLabel(menu.getName(), SwingConstants.CENTER);
         nameLabel.setFont(new Font("맑은 고딕", Font.BOLD, 14));
 
-        JLabel priceLabel = new JLabel(String.format("%,d원", menu.getPrice()), SwingConstants.CENTER);
+        JLabel priceLabel = new JLabel(menu.getPrice() + "원", SwingConstants.CENTER);
         priceLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 13));
 
         infoPanel.add(nameLabel);
@@ -229,14 +238,14 @@ public class MainKioskFrame extends JFrame {
         }
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            try {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            } catch (Exception e) {
-                System.err.println("Error setting look and feel: " + e.getMessage());
-            }
-            new MainKioskFrame();
-        });
+    private void playSound(String soundFilePath) {
+        try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(soundFilePath));
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.start();
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
+        }
     }
 }

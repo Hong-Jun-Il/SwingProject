@@ -66,22 +66,29 @@ public class OrderPanel extends JPanel {
         itemPanel.add(nameLabel, BorderLayout.WEST);
 
         // 중앙: 수량 조절 패널
-        JPanel quantityPanel = new JPanel(new GridLayout(1, 3, 5, 0));
+        JPanel quantityPanel = new JPanel(new GridBagLayout()); // GridBagLayout으로 변경
         quantityPanel.setBackground(Color.WHITE);
 
         JButton minusBtn = createQuantityButton("-");
         JLabel quantityLabel = new JLabel("1", SwingConstants.CENTER);
         JButton plusBtn = createQuantityButton("+");
 
-        quantityPanel.add(minusBtn);
-        quantityPanel.add(quantityLabel);
-        quantityPanel.add(plusBtn);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(0, 5, 0, 5); // 버튼 간격
+        gbc.anchor = GridBagConstraints.CENTER; // 중앙 정렬
 
-        // 수량 조절 패널을 감싸는 컨테이너
-        JPanel quantityContainer = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
-        quantityContainer.setBackground(Color.WHITE);
-        quantityContainer.add(quantityPanel);
-        itemPanel.add(quantityContainer, BorderLayout.CENTER);
+        // 버튼과 레이블을 GridBagLayout에 추가
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        quantityPanel.add(minusBtn, gbc);
+
+        gbc.gridx = 1;
+        quantityPanel.add(quantityLabel, gbc);
+
+        gbc.gridx = 2;
+        quantityPanel.add(plusBtn, gbc);
+
+        itemPanel.add(quantityPanel, BorderLayout.CENTER);
 
         // 오른쪽: 가격
         JLabel priceLabel = new JLabel(orderItem.getMenu().getPrice() + "원", SwingConstants.RIGHT);
@@ -117,10 +124,11 @@ public class OrderPanel extends JPanel {
         itemPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
     }
 
+
     private JButton createQuantityButton(String text) {
         JButton button = new JButton(text);
-        button.setPreferredSize(new Dimension(25, 25));
-        button.setFont(new Font("맑은 고딕", Font.BOLD, 12));
+        button.setPreferredSize(new Dimension(45, 30));
+        button.setFont(new Font("맑은 고딕", Font.BOLD, 14));
         button.setFocusPainted(false);
         button.setBackground(new Color(135, 206, 235));
         button.setForeground(Color.WHITE);

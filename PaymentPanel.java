@@ -1,3 +1,6 @@
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -86,7 +89,7 @@ public class PaymentPanel extends JPanel {
 
     public void updateTotalAmount(int amount) {
         this.totalAmount = amount;
-        paymentButton.setText(String.format("%,d원 결제하기", amount));
+        paymentButton.setText(amount + "원 결제하기");
     }
 
     private void resetTimer() {
