@@ -1,3 +1,6 @@
+import javax.swing.*;
+import java.awt.*;
+
 public class PaymentPanel extends JPanel {
     private JLabel timeLabel;
     private JLabel itemCountLabel;

@@ -12,7 +12,7 @@ public class MainKioskFrame extends JFrame {
     private static final int FRAME_HEIGHT = 800;
 
     public MainKioskFrame() {
-        setTitle("Easy KIOSK");
+        setTitle("한성 키오스크");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(FRAME_WIDTH, FRAME_HEIGHT);
 
@@ -64,7 +64,7 @@ public class MainKioskFrame extends JFrame {
         categoryPanel.setBackground(new Color(255, 102, 0));
         categoryPanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
 
-        String[] categories = {"세트메뉴", "추천(음료)", "추천(디저트)", "커피(HOT)", "커피(ICE)"};
+        String[] categories = {"전체", "커피", "디저트", "에이드", "티"};
 
         for (String category : categories) {
             JButton categoryBtn = createCategoryButton(category);
@@ -135,7 +135,7 @@ public class MainKioskFrame extends JFrame {
             Image img = icon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
             imageLabel.setIcon(new ImageIcon(img));
         } catch (Exception e) {
-            System.err.println("Error loading image for menu item: " + menu.getName());
+            System.err.println("이미지 파일을 찾을 수 없음" + menu.getName());
             imageLabel.setText("No Image");
         }
 
@@ -188,11 +188,20 @@ public class MainKioskFrame extends JFrame {
     }
 
     private void filterMenusByCategory(String category) {
-        List<Menu> filteredMenus = menuList.stream()
-                .filter(menu -> menu.getCategory().equals(category))
-                .toList();
+        System.out.println(category);
+        List<Menu> filteredMenus;
+
+        if ("전체".equals(category)) {
+            filteredMenus = menuList;
+        } else {
+            filteredMenus = menuList.stream()
+                    .filter(menu -> menu.getCategory().equals(category))
+                    .toList();
+        }
+
         displayMenus(filteredMenus);
     }
+
 
     private void selectMenuItem(Menu menu) {
         if (menu.getStock() > 0) {
@@ -208,16 +217,5 @@ public class MainKioskFrame extends JFrame {
                     "품절",
                     JOptionPane.INFORMATION_MESSAGE);
         }
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            try {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            } catch (Exception e) {
-                System.err.println("Error setting look and feel: " + e.getMessage());
-            }
-            new MainKioskFrame();
-        });
     }
 }
