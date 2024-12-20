@@ -10,9 +10,10 @@ public class MainKioskFrame extends JFrame {
     private final List<Menu> menuList;
     private static final int FRAME_WIDTH = 1200;
     private static final int FRAME_HEIGHT = 800;
+    private static final Color THEME_COLOR = new Color(135, 206, 235);
 
     public MainKioskFrame() {
-        setTitle("한성 키오스크");
+        setTitle("카페 디버그(Cafe Debug)");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(FRAME_WIDTH, FRAME_HEIGHT);
 
@@ -30,38 +31,46 @@ public class MainKioskFrame extends JFrame {
     private void initializeUI() {
         // 메인 패널 생성
         JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBackground(THEME_COLOR);
 
         // 1. 상단 카테고리 패널 추가
         mainPanel.add(createCategoryPanel(), BorderLayout.NORTH);
 
         // 2. 중앙 컨테이너 패널 생성
-        JPanel centerContainerPanel = new JPanel(new BorderLayout());
+        JPanel centerContainerPanel = new JPanel(new BorderLayout(10, 0));
+        centerContainerPanel.setBackground(THEME_COLOR);
         centerContainerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // 2-1. 왼쪽 주문 패널
-        orderPanel = new OrderPanel();
-        centerContainerPanel.add(orderPanel, BorderLayout.WEST);
-
-        // 2-2. 중앙 메뉴 패널
+        // 2-1. 중앙 메뉴 패널
         createMenuPanel();
         JScrollPane menuScrollPane = new JScrollPane(menuPanel);
         menuScrollPane.setBorder(BorderFactory.createEmptyBorder());
         centerContainerPanel.add(menuScrollPane, BorderLayout.CENTER);
 
-        // 2-3. 오른쪽 결제 패널
+        // 2-2. 오른쪽 통합 패널 (주문목록 + 결제정보)
+        JPanel rightPanel = new JPanel(new BorderLayout(0, 10));
+        rightPanel.setBackground(THEME_COLOR);
+
+        // 주문 목록 패널
+        orderPanel = new OrderPanel();
+        rightPanel.add(orderPanel, BorderLayout.CENTER);
+
+        // 결제 정보 패널
         paymentPanel = new PaymentPanel();
-        centerContainerPanel.add(paymentPanel, BorderLayout.EAST);
+        paymentPanel.setOrderPanel(orderPanel);
+        orderPanel.setPaymentPanel(paymentPanel);
+        paymentPanel.setDeleteActionListener(e -> handleDeleteAction());
+        rightPanel.add(paymentPanel, BorderLayout.SOUTH);
 
-        // 메인 패널에 중앙 컨테이너 추가
+        centerContainerPanel.add(rightPanel, BorderLayout.EAST);
+
         mainPanel.add(centerContainerPanel, BorderLayout.CENTER);
-
-        // 메인 패널을 프레임에 추가
         setContentPane(mainPanel);
     }
 
     private JPanel createCategoryPanel() {
         JPanel categoryPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
-        categoryPanel.setBackground(new Color(255, 102, 0));
+        categoryPanel.setBackground(THEME_COLOR);
         categoryPanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
 
         String[] categories = {"전체", "커피", "디저트", "에이드", "티"};
@@ -77,24 +86,21 @@ public class MainKioskFrame extends JFrame {
     private JButton createCategoryButton(String category) {
         JButton categoryBtn = new JButton(category);
         categoryBtn.setForeground(Color.WHITE);
-        categoryBtn.setBackground(new Color(255, 102, 0));
+        categoryBtn.setBackground(THEME_COLOR);
         categoryBtn.setBorderPainted(false);
         categoryBtn.setFocusPainted(false);
         categoryBtn.setFont(new Font("맑은 고딕", Font.BOLD, 14));
 
-        // 버튼 이벤트
         categoryBtn.addActionListener(e -> filterMenusByCategory(category));
-
-        // 마우스 오버 효과
         categoryBtn.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                categoryBtn.setBackground(new Color(255, 140, 0));
+                categoryBtn.setBackground(THEME_COLOR.brighter());
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                categoryBtn.setBackground(new Color(255, 102, 0));
+                categoryBtn.setBackground(THEME_COLOR);
             }
         });
 
@@ -103,9 +109,9 @@ public class MainKioskFrame extends JFrame {
 
     private void createMenuPanel() {
         menuPanel = new JPanel();
-        menuPanel.setLayout(new GridLayout(0, 3, 20, 20));
+        menuPanel.setLayout(new GridLayout(0, 4, 10, 10));
         menuPanel.setBackground(Color.WHITE);
-        menuPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        menuPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         displayMenus(menuList);
     }
@@ -121,29 +127,29 @@ public class MainKioskFrame extends JFrame {
 
     private JPanel createMenuCard(Menu menu) {
         JPanel card = new JPanel();
-        card.setLayout(new BorderLayout(10, 10));
+        card.setLayout(new BorderLayout(5, 5));
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200)));
 
         // 이미지 패널
-        JPanel imagePanel = new JPanel();
+        JPanel imagePanel = new JPanel(new BorderLayout());
         imagePanel.setBackground(Color.WHITE);
         JLabel imageLabel = new JLabel();
 
         try {
             ImageIcon icon = new ImageIcon(menu.getImagePath());
-            Image img = icon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+            Image img = icon.getImage().getScaledInstance(120, 120, Image.SCALE_SMOOTH);
             imageLabel.setIcon(new ImageIcon(img));
         } catch (Exception e) {
-            System.err.println("이미지 파일을 찾을 수 없음" + menu.getName());
+            System.err.println("이미지를 찾을 수 없습니다: " + menu.getName());
             imageLabel.setText("No Image");
         }
 
-        imagePanel.add(imageLabel);
+        imagePanel.add(imageLabel, BorderLayout.CENTER);
         card.add(imagePanel, BorderLayout.CENTER);
 
         // 정보 패널
-        JPanel infoPanel = new JPanel(new GridLayout(2, 1, 5, 5));
+        JPanel infoPanel = new JPanel(new GridLayout(2, 1, 2, 2));
         infoPanel.setBackground(Color.WHITE);
 
         JLabel nameLabel = new JLabel(menu.getName(), SwingConstants.CENTER);
@@ -156,13 +162,7 @@ public class MainKioskFrame extends JFrame {
         infoPanel.add(priceLabel);
         card.add(infoPanel, BorderLayout.SOUTH);
 
-        // 카드 선택 이벤트
-        addMenuCardListeners(card, imagePanel, infoPanel, menu);
-
-        return card;
-    }
-
-    private void addMenuCardListeners(JPanel card, JPanel imagePanel, JPanel infoPanel, Menu menu) {
+        // 메뉴 선택 이벤트
         card.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -179,6 +179,8 @@ public class MainKioskFrame extends JFrame {
                 setComponentsBackground(Color.WHITE, card, imagePanel, infoPanel);
             }
         });
+
+        return card;
     }
 
     private void setComponentsBackground(Color color, JPanel... panels) {
@@ -188,9 +190,7 @@ public class MainKioskFrame extends JFrame {
     }
 
     private void filterMenusByCategory(String category) {
-        System.out.println(category);
         List<Menu> filteredMenus;
-
         if ("전체".equals(category)) {
             filteredMenus = menuList;
         } else {
@@ -198,24 +198,45 @@ public class MainKioskFrame extends JFrame {
                     .filter(menu -> menu.getCategory().equals(category))
                     .toList();
         }
-
         displayMenus(filteredMenus);
     }
-
 
     private void selectMenuItem(Menu menu) {
         if (menu.getStock() > 0) {
             orderPanel.addMenuItem(menu);
             menu.decreaseStock(1);
-
-            // 결제 패널 업데이트
             paymentPanel.updateItemCount(orderPanel.getItemCount());
-            paymentPanel.updateTotalAmount(orderPanel.getTotalAmount());
         } else {
             JOptionPane.showMessageDialog(this,
                     "죄송합니다. 해당 메뉴는 품절되었습니다.",
                     "품절",
                     JOptionPane.INFORMATION_MESSAGE);
         }
+    }
+
+    private void handleDeleteAction() {
+        int selectedOption = JOptionPane.showConfirmDialog(
+                this,
+                "선택한 메뉴를 삭제하시겠습니까?",
+                "메뉴 삭제",
+                JOptionPane.YES_NO_OPTION
+        );
+
+        if (selectedOption == JOptionPane.YES_OPTION) {
+            orderPanel.clearAllItems();
+            paymentPanel.updateItemCount(0);
+            paymentPanel.updateTotalAmount(0);
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            try {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } catch (Exception e) {
+                System.err.println("Error setting look and feel: " + e.getMessage());
+            }
+            new MainKioskFrame();
+        });
     }
 }
