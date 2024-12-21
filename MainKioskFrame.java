@@ -2,8 +2,8 @@ import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.net.URL;
 import java.util.List;
 
 public class MainKioskFrame extends JFrame {
@@ -140,11 +140,18 @@ public class MainKioskFrame extends JFrame {
         JLabel imageLabel = new JLabel();
 
         try {
-            ImageIcon icon = new ImageIcon(menu.getImagePath());
-            Image img = icon.getImage().getScaledInstance(120, 120, Image.SCALE_SMOOTH);
-            imageLabel.setIcon(new ImageIcon(img));
+            URL imageUrl = MainKioskFrame.class.getClassLoader().getResource(menu.getImagePath());
+            if (imageUrl != null) {
+                ImageIcon icon = new ImageIcon(imageUrl);
+                Image img = icon.getImage().getScaledInstance(120, 120, Image.SCALE_SMOOTH);
+                imageLabel.setIcon(new ImageIcon(img));
+            } else {
+                System.err.println("이미지를 찾을 수 없습니다: " + menu.getImagePath());
+                imageLabel.setText("No Image");
+            }
         } catch (Exception e) {
-            System.err.println("이미지를 찾을 수 없습니다: " + menu.getName());
+            System.err.println("이미지 로딩 에러: " + menu.getName());
+            e.printStackTrace();
             imageLabel.setText("No Image");
         }
 
@@ -240,11 +247,18 @@ public class MainKioskFrame extends JFrame {
 
     private void playSound(String soundFilePath) {
         try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(soundFilePath));
+            InputStream soundStream = MainKioskFrame.class.getClassLoader().getResourceAsStream(soundFilePath);
+            if (soundStream == null) {
+                System.err.println("Could not find sound file: " + soundFilePath);
+                return;
+            }
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(
+                    new BufferedInputStream(soundStream)
+            );
             Clip clip = AudioSystem.getClip();
             clip.open(audioInputStream);
             clip.start();
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

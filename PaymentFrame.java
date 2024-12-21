@@ -9,8 +9,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 
 public class PaymentFrame extends JFrame {
     private static final Color THEME_COLOR = new Color(135, 206, 235); // 스카이 블루 테마 색상
@@ -132,7 +131,6 @@ public class PaymentFrame extends JFrame {
         button.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
         button.setFocusPainted(false);
 
-        // 버튼 클릭 시 색상 변경 및 사운드 재생
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -153,7 +151,7 @@ public class PaymentFrame extends JFrame {
                     // 결제 사운드 재생
                     playSound(soundFile);
 
-                    // 1.5초 후에 결제 완료 메시지 표시
+                    // 3초 후에 결제 완료 메시지 표시
                     Timer timer = new Timer(3000, new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
@@ -183,11 +181,18 @@ public class PaymentFrame extends JFrame {
 
     private void playSound(String soundFilePath) {
         try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(soundFilePath));
+            InputStream soundStream = PaymentFrame.class.getClassLoader().getResourceAsStream(soundFilePath);
+            if (soundStream == null) {
+                System.err.println("Could not find sound file: " + soundFilePath);
+                return;
+            }
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(
+                    new BufferedInputStream(soundStream)
+            );
             Clip clip = AudioSystem.getClip();
             clip.open(audioInputStream);
             clip.start();
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
