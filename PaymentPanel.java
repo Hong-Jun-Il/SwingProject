@@ -63,16 +63,17 @@ public class PaymentPanel extends JPanel {
     }
 
     private void startTimer() {
-        timer = new Timer(1000, e -> {
-            timeRemaining--;
-            timeLabel.setText("남은시간: " + timeRemaining + "초");
-            if (timeRemaining <= 0) {
-                ((Timer)e.getSource()).stop();
-                JOptionPane.showMessageDialog(null, "시간이 초과되었습니다.");
-                resetTimer();
+        new Thread(() -> {
+            while (timeRemaining > 0) {
+                try {
+                    Thread.sleep(1000);
+                    timeRemaining--;
+                    SwingUtilities.invokeLater(() -> timeLabel.setText("남은시간: " + timeRemaining + "초"));
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
             }
-        });
-        timer.start();
+        }).start();
     }
 
     public void setDeleteActionListener(ActionListener listener) {

@@ -9,8 +9,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 
 public class PaymentFrame extends JFrame {
     private static final Color THEME_COLOR = new Color(135, 206, 235); // 스카이 블루 테마 색상
@@ -109,7 +108,7 @@ public class PaymentFrame extends JFrame {
         step2Panel.add(new JLabel("Step 2. 결제방법/선물을 선택해주세요."), BorderLayout.NORTH);
         JPanel buttonPanel2 = new JPanel(new GridLayout(1, 2, 10, 0));
         buttonPanel2.add(createStepButton("결제하기", "step2"));
-        buttonPanel2.add(createStepButton("선물하기", "step2"));
+        buttonPanel2.add(createStepButton("할인/적립하기", "step2"));
         step2Panel.add(buttonPanel2, BorderLayout.CENTER);
         panel.add(step2Panel);
 
@@ -132,7 +131,6 @@ public class PaymentFrame extends JFrame {
         button.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
         button.setFocusPainted(false);
 
-        // 버튼 클릭 시 색상 변경 및 사운드 재생
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -146,9 +144,34 @@ public class PaymentFrame extends JFrame {
                 // 현재 버튼을 선택된 버튼으로 저장
                 stepButtonsMap.put(step, button);
 
-                // step3 버튼 클릭 시 사운드 재생
+                // step3 버튼 클릭 시 (결제 단계)
                 if (step.equals("step3")) {
-                    playSound(button.getText().equals("신용/체크") ? "sound/putTheCard.wav" : "sound/phone.wav");
+                    String soundFile = button.getText().equals("신용/체크") ? "sound/putTheCard.wav" : "sound/phone.wav";
+
+                    // 결제 사운드 재생
+                    playSound(soundFile);
+
+                    // 3초 후에 결제 완료 메시지 표시
+                    Timer timer = new Timer(3000, new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            // 결제 완료 사운드 재생
+                            playSound("sound/pay.wav");
+
+                            // 결제 완료 메시지 표시
+                            JOptionPane.showMessageDialog(
+                                    PaymentFrame.this,
+                                    "결제가 완료되었습니다.",
+                                    "결제 완료",
+                                    JOptionPane.INFORMATION_MESSAGE
+                            );
+
+                            // 창 닫기
+                            dispose();
+                        }
+                    });
+                    timer.setRepeats(false); // 타이머는 한 번만 실행
+                    timer.start();
                 }
             }
         });
@@ -158,11 +181,18 @@ public class PaymentFrame extends JFrame {
 
     private void playSound(String soundFilePath) {
         try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(soundFilePath));
+            InputStream soundStream = PaymentFrame.class.getClassLoader().getResourceAsStream(soundFilePath);
+            if (soundStream == null) {
+                System.err.println("Could not find sound file: " + soundFilePath);
+                return;
+            }
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(
+                    new BufferedInputStream(soundStream)
+            );
             Clip clip = AudioSystem.getClip();
             clip.open(audioInputStream);
             clip.start();
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
