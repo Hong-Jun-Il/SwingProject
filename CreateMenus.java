@@ -5,7 +5,6 @@ public class CreateMenus {
     public List<Menu> createMenus() {
         List<Menu> menuList = new ArrayList<>();
 
-        // 커피 카테고리
         menuList.add(new Menu(1, "아이스 아메리카노", 2000, "시원한 아메리카노", "images/IceAmericano.jpg", "커피", 20));
         menuList.add(new Menu(2, "카페 라떼", 3000, "부드러운 라떼", "images/CafeLatte.jpg", "커피", 15));
         menuList.add(new Menu(3, "바닐라 라떼", 3500, "달콤한 바닐라 라떼", "images/VanillaLatte.jpg", "커피", 10));
@@ -15,7 +14,6 @@ public class CreateMenus {
         menuList.add(new Menu(7, "더블 에스프레소", 2500, "진한 에스프레소", "images/DoubleEspresso.jpg", "커피", 22));
         menuList.add(new Menu(8, "헤이즐넛 라떼", 3600, "고소한 헤이즐넛 라떼", "images/HazelnutLatte.jpg", "커피", 10));
 
-        // 에이드 카테고리
         menuList.add(new Menu(9, "레몬 에이드", 3000, "상큼한 레몬 에이드", "images/LemonAde.jpg", "에이드", 20));
         menuList.add(new Menu(10, "자몽 에이드", 3500, "달콤쌉싸름한 자몽 에이드", "images/GrapefruitAde.jpg", "에이드", 15));
         menuList.add(new Menu(11, "청포도 에이드", 3000, "달콤한 청포도 에이드", "images/GreenGrapeAde.jpg", "에이드", 18));
@@ -25,7 +23,6 @@ public class CreateMenus {
         menuList.add(new Menu(15, "키위 에이드", 3400, "상큼한 키위 에이드", "images/KiwiAde.jpg", "에이드", 18));
         menuList.add(new Menu(16, "체리 에이드", 3500, "달콤한 체리 에이드", "images/CherryAde.jpg", "에이드", 10));
 
-        // 디저트 카테고리
         menuList.add(new Menu(17, "초코 케이크", 5000, "달콤한 초코 케이크", "images/ChocoCake.jpg", "디저트", 10));
         menuList.add(new Menu(18, "치즈 케이크", 5500, "부드러운 치즈 케이크", "images/CheeseCake.jpg", "디저트", 8));
         menuList.add(new Menu(19, "마카롱", 2000, "알록달록한 마카롱", "images/Macarons.jpg", "디저트", 12));
@@ -35,7 +32,6 @@ public class CreateMenus {
         menuList.add(new Menu(23, "크로와상", 3500, "바삭한 크로와상", "images/Croissant.jpg", "디저트", 15));
         menuList.add(new Menu(24, "푸딩", 3000, "부드러운 푸딩", "images/Pudding.jpg", "디저트", 13));
 
-        // 티 카테고리
         menuList.add(new Menu(25, "허브 티", 2500, "향긋한 허브 티", "images/HerbTea.jpg", "티", 20));
         menuList.add(new Menu(26, "얼그레이 티", 3000, "고급스러운 얼그레이 티", "images/EarlGreyTea.jpg", "티", 15));
         menuList.add(new Menu(27, "레몬 진저 티", 3500, "상큼한 레몬 진저 티", "images/LemonGingerTea.jpg", "티", 18));

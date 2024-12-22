@@ -15,7 +15,6 @@ public class OrderPanel extends JPanel {
         setPreferredSize(new Dimension(300, 400));
         setBackground(Color.WHITE);
 
-        // 제목 패널
         JPanel titlePanel = new JPanel();
         titlePanel.setBackground(new Color(135, 206, 235));
         JLabel titleLabel = new JLabel("선택한 메뉴", SwingConstants.CENTER);
@@ -24,7 +23,6 @@ public class OrderPanel extends JPanel {
         titlePanel.add(titleLabel);
         add(titlePanel, BorderLayout.NORTH);
 
-        // 주문 목록 패널
         orderListPanel = new JPanel();
         orderListPanel.setLayout(new BoxLayout(orderListPanel, BoxLayout.Y_AXIS));
         orderListPanel.setBackground(Color.WHITE);
@@ -59,13 +57,11 @@ public class OrderPanel extends JPanel {
         itemPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
         itemPanel.setPreferredSize(new Dimension(280, 40));
 
-        // 왼쪽: 메뉴 이름
         JLabel nameLabel = new JLabel(orderItem.getMenu().getName());
         nameLabel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
         nameLabel.setPreferredSize(new Dimension(100, 30));
         itemPanel.add(nameLabel, BorderLayout.WEST);
 
-        // 중앙: 수량 조절 패널
         JPanel quantityPanel = new JPanel(new GridBagLayout()); // GridBagLayout으로 변경
         quantityPanel.setBackground(Color.WHITE);
 
@@ -77,7 +73,6 @@ public class OrderPanel extends JPanel {
         gbc.insets = new Insets(0, 5, 0, 5); // 버튼 간격
         gbc.anchor = GridBagConstraints.CENTER; // 중앙 정렬
 
-        // 버튼과 레이블을 GridBagLayout에 추가
         gbc.gridx = 0;
         gbc.gridy = 0;
         quantityPanel.add(minusBtn, gbc);
@@ -90,13 +85,11 @@ public class OrderPanel extends JPanel {
 
         itemPanel.add(quantityPanel, BorderLayout.CENTER);
 
-        // 오른쪽: 가격
         JLabel priceLabel = new JLabel(orderItem.getMenu().getPrice() + "원", SwingConstants.RIGHT);
         priceLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
         priceLabel.setPreferredSize(new Dimension(80, 30));
         itemPanel.add(priceLabel, BorderLayout.EAST);
 
-        // 수량 조절 버튼 이벤트
         minusBtn.addActionListener(e -> {
             int quantity = orderItem.getQuantity();
             if (quantity > 1) {
@@ -120,7 +113,6 @@ public class OrderPanel extends JPanel {
         orderItem.setQuantityLabel(quantityLabel);
         orderItem.setPriceLabel(priceLabel);
 
-        // 패널 크기 업데이트
         itemPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
     }
 
@@ -153,16 +145,16 @@ public class OrderPanel extends JPanel {
         }
     }
 
-    public void removeSelectedItem(Menu menu) {
-        OrderItem orderItem = selectedMenus.get(menu.getId());
-        if (orderItem != null) {
-            orderListPanel.remove(orderItem.getPanel());
-            selectedMenus.remove(menu.getId());
-            updateTotalAmount();
-            revalidate();
-            repaint();
-        }
-    }
+//    public void removeSelectedItem(Menu menu) {
+//        OrderItem orderItem = selectedMenus.get(menu.getId());
+//        if (orderItem != null) {
+//            orderListPanel.remove(orderItem.getPanel());
+//            selectedMenus.remove(menu.getId());
+//            updateTotalAmount();
+//            revalidate();
+//            repaint();
+//        }
+//    }
 
     public void clearAllItems() {
         selectedMenus.clear();
@@ -173,9 +165,9 @@ public class OrderPanel extends JPanel {
         repaint();
     }
 
-    public int getTotalAmount() {
-        return totalAmount;
-    }
+//    public int getTotalAmount() {
+//        return totalAmount;
+//    }
 
     public int getItemCount() {
         return selectedMenus.size();

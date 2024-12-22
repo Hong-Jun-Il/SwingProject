@@ -22,30 +22,25 @@ public class PaymentPanel extends JPanel {
         setBackground(new Color(240, 240, 240));
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // 시간 표시
         timeLabel = new JLabel("남은시간: 119초", SwingConstants.CENTER);
         timeLabel.setFont(new Font("맑은 고딕", Font.BOLD, 14));
         timeRemaining = 119;
 
-        // 선택한 상품 개수
         itemCountLabel = new JLabel("선택한 상품: 0개", SwingConstants.CENTER);
         itemCountLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 12));
 
-        // 삭제 버튼
         deleteButton = new JButton("선택 삭제");
         deleteButton.setBackground(new Color(135, 206, 235));
         deleteButton.setForeground(Color.WHITE);
         deleteButton.setFocusPainted(false);
         deleteButton.setBorderPainted(false);
 
-        // 결제 버튼
         paymentButton = new JButton("0원 결제하기");
         paymentButton.setBackground(new Color(135, 206, 235));
         paymentButton.setForeground(Color.WHITE);
         paymentButton.setFocusPainted(false);
         paymentButton.setBorderPainted(false);
 
-        // 결제 버튼 클릭 이벤트 추가
         paymentButton.addActionListener(e -> {
             new PaymentFrame(orderPanel.getSelectedMenus(), totalAmount);
         });
@@ -63,17 +58,36 @@ public class PaymentPanel extends JPanel {
     }
 
     private void startTimer() {
-        new Thread(() -> {
-            while (timeRemaining > 0) {
-                try {
-                    Thread.sleep(1000);
-                    timeRemaining--;
-                    SwingUtilities.invokeLater(() -> timeLabel.setText("남은시간: " + timeRemaining + "초"));
-                } catch (InterruptedException ex) {
-                    ex.printStackTrace();
+        if (timer != null && timer.isRunning()) {
+            return;
+        }
+
+        timer = new Timer(1000, e -> {
+            if (timeRemaining > 0) {
+                timeRemaining--;
+                timeLabel.setText("남은시간: " + timeRemaining + "초");
+            } else {
+                int option = JOptionPane.showOptionDialog(
+                        SwingUtilities.getWindowAncestor(this),
+                        "주문 시간이 만료되었습니다.",
+                        "시간 초과",
+                        JOptionPane.DEFAULT_OPTION,
+                        JOptionPane.WARNING_MESSAGE,
+                        null,
+                        new Object[] { "확인" },
+                        "확인"
+                );
+
+                if (option == JOptionPane.OK_OPTION) {
+                    updateItemCount(0);
+                    resetTimer();
+                    if (orderPanel != null) {
+                        orderPanel.clearAllItems();
+                    }
                 }
             }
-        }).start();
+        });
+        timer.start();
     }
 
     public void setDeleteActionListener(ActionListener listener) {
@@ -96,12 +110,6 @@ public class PaymentPanel extends JPanel {
     private void resetTimer() {
         timeRemaining = 119;
         timeLabel.setText("남은시간: " + timeRemaining + "초");
-        timer.restart();
-    }
-
-    public void stopTimer() {
-        if (timer != null && timer.isRunning()) {
-            timer.stop();
-        }
+        startTimer();
     }
 }
